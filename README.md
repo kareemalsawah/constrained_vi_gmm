@@ -10,7 +10,7 @@ Constraint is provided as an extra observation showing how many points belong to
 ![Constrained Example](plots/constrained.gif)
 
 ## Mathematical Derivation
-The variational inference GMM is based on the derivation from Lecture 24 from the probabilistic machine learning course at Tu [link](https://uni-tuebingen.de/en/180804).
+The variational inference GMM is based on the derivation from Lecture 24 from the probabilistic machine learning course at Tübingen [link](https://uni-tuebingen.de/en/180804).
 
 ### Constrained GMM
 ![Probabilistic Graphical Model](gmm.png)
