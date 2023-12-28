@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 
 from matplotlib.patches import Ellipse
 from matplotlib.cm import ScalarMappable
+import matplotlib.transforms as transforms
 
 
 class Visualizer:
@@ -82,29 +83,33 @@ class Visualizer:
 
         self.ax.clear()
         self.ax.scatter(self.dataset[:, 0], self.dataset[:, 1], c="blue")
-
+        n_std = 2.0
         for mean, cov, weight in zip(means, covariances, weights):
             if weight < self.min_weight_visible:  # Don't plot if weight is too small
                 continue
 
-            # Eigenvalues and eigenvectors for the covariance matrix
-            vals, vecs = np.linalg.eigh(cov)
-            order = vals.argsort()[::-1]
-            vals, vecs = vals[order], vecs[:, order]
-
-            # Width and height of the ellipse, using a scaling factor for visualization
-            width, height = 2 * np.sqrt(vals)
-            angle = np.degrees(np.arctan2(*vecs[:, 0][::-1]))
-
-            # Create an ellipse
+            pearson = cov[0, 1] / np.sqrt(cov[0, 0] * cov[1, 1])
+            ell_radius_x = np.sqrt(1 + pearson)
+            ell_radius_y = np.sqrt(1 - pearson)
             ellipse = Ellipse(
-                xy=mean,
-                width=width,
-                height=height,
-                angle=angle,
+                (0, 0),
+                width=ell_radius_x * 2,
+                height=ell_radius_y * 2,
                 alpha=0.5,
                 color=self.cmap(weight),
             )
+            scale_x = np.sqrt(cov[0, 0]) * n_std
+            scale_y = np.sqrt(cov[1, 1]) * n_std
+
+            transf = (
+                transforms.Affine2D()
+                .rotate_deg(45)
+                .scale(scale_x, scale_y)
+                .translate(mean[0], mean[1])
+            )
+
+            ellipse.set_transform(transf + self.ax.transData)
+
             self.ax.add_patch(ellipse)
 
         # Set plot limits and labels, only for the first plot
