@@ -2,10 +2,10 @@
 Example on using the ConstrainedGMM class to cluster data with constraints
 """
 import numpy as np
-from src import ConstrainedGMM, GaussianClusters
+from src import ConstrainedGMM, GaussianClusters, GaussianMixtureModel
 
 
-def main():
+def example_1():
     """
     Main
     """
@@ -33,5 +33,56 @@ def main():
     print("Cluster covariances:", pred_cov)
 
 
+def example_2_unconstrained():
+    """
+    Example added as GIF in the README
+    """
+    np.random.seed(42)
+    points_cluster_1 = np.array([[1, 1], [1.2, 0.8], [1.4, 0.6], [1.6, 0.4]])
+    points_cluster_2 = np.array([[-1.2, -1.5], [-0.8, -1.8]])
+
+    point_between_them = (
+        np.mean(points_cluster_1, axis=0) + np.mean(points_cluster_2, axis=0)
+    ) / 2
+
+    # make it closer to the smaller cluster
+    point_between_them -= 0.4
+
+    all_points = np.concatenate(
+        [points_cluster_1, points_cluster_2, point_between_them.reshape(1, 2)],
+        axis=0,
+    )
+
+    gmm = GaussianMixtureModel(2, 100, 1e-3)
+    _, expected_z = gmm.fit(all_points, plot=True)
+
+
+def example_2_constrained():
+    """
+    Example added as GIF in the README
+    """
+    np.random.seed(42)
+    points_cluster_1 = np.array([[1, 1], [1.2, 0.8], [1.4, 0.6], [1.6, 0.4]])
+    points_cluster_2 = np.array([[-1.2, -1.5], [-0.8, -1.8]])
+
+    point_between_them = (
+        np.mean(points_cluster_1, axis=0) + np.mean(points_cluster_2, axis=0)
+    ) / 2
+
+    # make it closer to the smaller cluster
+    point_between_them -= 0.4
+
+    all_points = np.concatenate(
+        [points_cluster_1, points_cluster_2, point_between_them.reshape(1, 2)],
+        axis=0,
+    )
+
+    # ratios wanting to assign it to larger cluster at idx 0
+    counts = np.array([5, 2]) / 7
+    gmm = ConstrainedGMM(counts, 0.01, 2, 100, 1e-3)
+    _, expected_z = gmm.fit(all_points, plot=True)
+
+
 if __name__ == "__main__":
-    main()
+    # example_2_unconstrained()
+    example_2_constrained()
