@@ -62,6 +62,9 @@ class Visualizer:
         weights: np.array
             shape=(n_clusters,)
         """
+        if not self.enabled:
+            return
+
         n_clusters, _ = means.shape
         weights = weights.reshape(-1, 1)
 
