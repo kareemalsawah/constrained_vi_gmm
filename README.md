@@ -16,7 +16,7 @@ The variational inference GMM is based on the derivation from Lecture 24 from th
 ![Probabilistic Graphical Model](gmm.png)
 
 In addition to the distribution from the previously mentioned source. There is an additional $P(C|Z)$ assumed to follow this distribution:
-$$ P(c_k|Z) = N(c_k; \sum_{n=1}^{N}Z_{nk}, \sigma^2) $$
+$ P(c_k|Z) = N(c_k; \sum_{n=1}^{N}Z_{nk}, \sigma^2) $
 
 With all the $c_k$ independent. This constrains the observed ratios for clusters in Z, but allows the model to probabilistically select which point is in each cluster (instead of imposing hard cluster sizes for each cluster).
 
