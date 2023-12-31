@@ -28,9 +28,9 @@ class PermInvGibbsSampler:
         self,
         observed_ratios: np.array,
         observation_variance: float,
-        n_chains: int = 50,
-        burn_in: int = 20,
-        chain_length: int = 100,
+        n_chains: int = 100,
+        burn_in: int = 50,
+        chain_length: int = 50,
     ):
         self.n_chains = n_chains
         self.burn_in = burn_in
@@ -81,7 +81,7 @@ class PermInvGibbsSampler:
 
         z_samples = np.array(z_samples)
         expected_z = np.mean(z_samples, axis=0)
-        expected_z /= np.sum(expected_z, axis=1, keepdims=True)
+        expected_z /= np.sum(expected_z, axis=1, keepdims=True) + 1e-5
         return expected_z
 
     def prob_c_given_z(self, z: np.ndarray, idx: int) -> np.ndarray:

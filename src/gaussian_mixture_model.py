@@ -120,7 +120,7 @@ class GaussianMixtureModel:
             expected_z.reshape(n_samples, self.n_clusters, 1)
             * dataset.reshape(n_samples, 1, n_dims),
             axis=0,
-        ) / cluster_ratios.reshape(self.n_clusters, 1)
+        ) / (cluster_ratios.reshape(self.n_clusters, 1) + 1e-5)
 
         # cluster covariance, shape = (n_clusters, n_dims, n_dims)
         diff = dataset.reshape(n_samples, 1, n_dims, 1) - x_bar.reshape(
@@ -130,8 +130,8 @@ class GaussianMixtureModel:
             "nkij,nkjb->nkib", diff, diff.transpose(0, 1, 3, 2), optimize=True
         )  # shape=(n_samples, n_clusters, n_dims, n_dims)
         cov_s_weighted = expected_z.reshape(n_samples, self.n_clusters, 1, 1) * cov_s
-        s_k = np.sum(cov_s_weighted, axis=0) / cluster_ratios.reshape(
-            self.n_clusters, 1, 1
+        s_k = np.sum(cov_s_weighted, axis=0) / (
+            cluster_ratios.reshape(self.n_clusters, 1, 1) + 1e-5
         )  # shape=(n_clusters, n_dims, n_dims)
 
         return cluster_ratios, x_bar, s_k
@@ -172,8 +172,8 @@ class GaussianMixtureModel:
         m_k = (
             prior_params.beta * prior_params.mu.reshape(1, n_dims)
             + cluster_ratios.reshape(n_dims, 1) * x_bar
-        ) / beta_k.reshape(
-            n_clusters, 1
+        ) / (
+            beta_k.reshape(n_clusters, 1) + 1e-5
         )  # shape=(n_clusters, n_dims)
         v_k = prior_params.v + cluster_ratios  # shape=(n_clusters)
         w_inv_k = (
@@ -291,7 +291,7 @@ class GaussianMixtureModel:
 
         unnormalized_probs = np.exp(unnormalized_log_probs)
         expected_z = unnormalized_probs / (
-            np.sum(unnormalized_probs, axis=1, keepdims=True) + 1e-3
+            np.sum(unnormalized_probs, axis=1, keepdims=True) + 1e-5
         )
         return expected_z
 
