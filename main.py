@@ -83,6 +83,66 @@ def example_2_constrained():
     _, expected_z = gmm.fit(all_points, plot=True)
 
 
+def example_2_unconstrained():
+    """
+    Example added as GIF in the README
+    """
+    np.random.seed(42)
+    points_cluster_1 = np.array([[1, 1], [1.2, 0.8], [1.4, 0.6], [1.6, 0.4]])
+    points_cluster_2 = np.array([[-1.2, -1.5], [-0.8, -1.8]])
+
+    point_between_them = (
+        np.mean(points_cluster_1, axis=0) + np.mean(points_cluster_2, axis=0)
+    ) / 2
+
+    # make it closer to the smaller cluster
+    point_between_them -= 0.4
+
+    all_points = np.concatenate(
+        [points_cluster_1, points_cluster_2, point_between_them.reshape(1, 2)],
+        axis=0,
+    )
+
+    gmm = GaussianMixtureModel(2, 100, 1e-3)
+    _, expected_z = gmm.fit(all_points, plot=True)
+
+
+def example_3():
+    """
+    Another example
+    """
+    np.random.seed(42)
+    max_iters = 30
+    convergence_tol = 1e-3
+    precision_of_counts = 0.01  # lower means more confident
+
+    all_points = np.array([[-1, 0], [1, 0], [0.2, 0]])
+    counts = np.array([0.5, 0.5])
+
+    # all_points = np.array([[-1, 0], [1, 0], [-0.2, 0]])
+    # counts = np.array([0.5, 0.5])
+
+    # all_points = np.array([[-1, 0.2], [-1, -0.2], [1, 0], [0.2, 0]])
+    # counts = np.array([0.5, 0.5])
+
+    # all_points = np.array([[-1, 0.2], [-1, -0.2], [1, 0], [0.2, 0]])
+    # counts = np.array([0.75, 0.25])
+
+    # all_points = np.array([[-1, 0], [1, 0]])
+    # counts = np.array([0.45, 0.45, 0.1])
+
+    # all_points = np.array([[-1, 0.2], [-1, -0.2], [1, 0]])
+    # counts = np.array([0.6, 0.3, 0.1])
+
+    gmm = ConstrainedGMM(
+        counts, precision_of_counts, counts.shape[0], max_iters, convergence_tol
+    )
+    _, expected_z = gmm.fit(all_points, plot=True)
+
+    print(expected_z)
+
+
 if __name__ == "__main__":
     # example_2_unconstrained()
-    example_2_constrained()
+    # example_2_constrained()
+    example_3()
