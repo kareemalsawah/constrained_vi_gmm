@@ -171,7 +171,7 @@ class GaussianMixtureModel:
         beta_k = prior_params.beta + cluster_ratios  # shape = (n_clusters)
         m_k = (
             prior_params.beta * prior_params.mu.reshape(1, n_dims)
-            + cluster_ratios.reshape(n_dims, 1) * x_bar
+            + cluster_ratios.reshape(n_clusters, 1) * x_bar
         ) / (
             beta_k.reshape(n_clusters, 1) + 1e-5
         )  # shape=(n_clusters, n_dims)
